@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile Quotes Service Protobuff",
+            "type": "shell",
+            "command": [
+                "protoc",
+                "--go_out=./quotespb/",
+                "--go_opt=paths=source_relative",
+                "--go-grpc_out=./quotespb/",
+                "--go-grpc_opt=paths=source_relative",
+                "quotes_service.proto"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/protos"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
