@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package quotes;
 
+import public "google/protobuf/empty.proto";
+
 option go_package = "github.com/apfelkraepfla/quotes-service/protos/quotespb";
 
 message QuoteRequest {}
@@ -10,6 +12,11 @@ message QuoteResponse {
   string quote = 1;
 }
 
+message StoreQuoteRequest {
+  string quote = 1;
+}
+
 service QuoteService {
   rpc GetQuote (QuoteRequest) returns (QuoteResponse);
+  rpc StoreQuote (StoreQuoteRequest) returns (google.protobuf.Empty);
 }
