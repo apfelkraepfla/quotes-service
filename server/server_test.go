@@ -10,7 +10,7 @@ import (
 
 func TestGetQuote(t *testing.T) {
 	// Create an instance of your server
-	s := &server{} // Make sure to adjust this line based on your actual server initialization
+	s := &quoteServer{} // Make sure to adjust this line based on your actual server initialization
 
 	// Create a sample QuoteRequest
 	req := &pb.QuoteRequest{

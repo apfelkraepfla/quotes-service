@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-type server struct {
+type quoteServer struct {
 	pb.QuoteServiceServer
 }
 
@@ -19,7 +19,7 @@ type ServerConfig struct {
 	Port int
 }
 
-func (s *server) GetQuote(ctx context.Context, req *pb.QuoteRequest) (*pb.QuoteResponse, error) {
+func (s *quoteServer) GetQuote(ctx context.Context, req *pb.QuoteRequest) (*pb.QuoteResponse, error) {
 	// Return a hardcoded philosophical quote
 	return &pb.QuoteResponse{
 		Quote: "The only true wisdom is in knowing you know nothing. - Socrates",
@@ -33,7 +33,7 @@ func StartServer(config ServerConfig) {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterQuoteServiceServer(grpcServer, &server{})
+	pb.RegisterQuoteServiceServer(grpcServer, &quoteServer{})
 	// Register reflection service on gRPC server.
 	reflection.Register(grpcServer)
 
