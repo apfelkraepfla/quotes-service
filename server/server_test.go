@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	pb "github.com/apfelkraepfla/quotes-service/protos/quotespb"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetQuote(t *testing.T) {
@@ -30,4 +31,15 @@ func TestGetQuote(t *testing.T) {
 	if res.Quote != expectedQuote {
 		t.Errorf("Expected quote %q, but got %q", expectedQuote, res.Quote)
 	}
+}
+
+func TestStoreQuote(t *testing.T) {
+
+	mockService := &quoteServer{}
+	storeQuoteReq := &pb.StoreQuoteRequest{Quote: "Testing is better than believing."}
+
+	emptyResponse, err := mockService.StoreQuote(context.Background(), storeQuoteReq)
+
+	assert.NoError(t, err, "Expected no error while storing a quote")
+	assert.NotNil(t, emptyResponse, "Expected a non-nil response for StoreQuote")
 }
