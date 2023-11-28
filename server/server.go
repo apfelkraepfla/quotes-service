@@ -26,6 +26,12 @@ func (s *quoteServer) GetQuote(ctx context.Context, req *pb.QuoteRequest) (*pb.Q
 	}, nil
 }
 
+func (s *quoteServer) StoreQuote(ctx context.Context, req *pb.StoreQuoteRequest) (*pb.Empty, error) {
+	// Store a quote
+	log.Printf("Storing the quote: %v", req.Quote)
+	return &pb.Empty{}, nil
+}
+
 func StartServer(config ServerConfig) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err != nil {
