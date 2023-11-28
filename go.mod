@@ -2,6 +2,8 @@ module github.com/apfelkraepfla/quotes_service
 
 go 1.21.4
 
+replace github.com/apfelkraepfla/protos => ../protos
+
 require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
