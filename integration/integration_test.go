@@ -52,7 +52,7 @@ func stopTestServer(grpcServer *grpc.Server, lis net.Listener) {
 	lis.Close()
 }
 
-func TestGetQuote(t *testing.T) {
+func TestQuoteService(t *testing.T) {
 	// Start the test gRPC server
 	grpcServer, lis := startTestServer(t)
 	defer stopTestServer(grpcServer, lis)
