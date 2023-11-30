@@ -3,20 +3,31 @@ syntax = "proto3";
 package quotes;
 
 import public "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 
 option go_package = "github.com/apfelkraepfla/quotes-service/protos/quotespb";
 
 message QuoteRequest {}
 
 message QuoteResponse {
-  string quote = 1;
+  string Quote = 1  [(google.api.field_behavior) = REQUIRED, json_name = "name"];
 }
 
 message StoreQuoteRequest {
-  string quote = 1;
+  string Quote = 1 [(google.api.field_behavior) = REQUIRED, json_name = "name"];
 }
 
 service QuoteService {
-  rpc GetQuote (QuoteRequest) returns (QuoteResponse);
-  rpc StoreQuote (StoreQuoteRequest) returns (google.protobuf.Empty);
+  rpc GetQuote (QuoteRequest) returns (QuoteResponse) {
+        option (google.api.http) = {
+            get: "/api/quotes-service"
+        };
+  };
+  rpc StoreQuote (StoreQuoteRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/api/quotes-service"
+            body: "*"
+        };
+  };
 }

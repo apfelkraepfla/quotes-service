@@ -9,7 +9,10 @@
                 "--go_out=./quotespb/",
                 "--go_opt=paths=source_relative",
                 "--go-grpc_out=./quotespb/",
+                "--go-grpc_opt=require_unimplemented_servers=false",
                 "--go-grpc_opt=paths=source_relative",
+                "--grpc-gateway_out=./quotespb/",
+                "--grpc-gateway_opt=paths=source_relative",
                 "quotes_service.proto"
             ],
             "options": {

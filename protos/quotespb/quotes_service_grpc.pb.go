@@ -54,15 +54,14 @@ func (c *quoteServiceClient) StoreQuote(ctx context.Context, in *StoreQuoteReque
 }
 
 // QuoteServiceServer is the server API for QuoteService service.
-// All implementations must embed UnimplementedQuoteServiceServer
+// All implementations should embed UnimplementedQuoteServiceServer
 // for forward compatibility
 type QuoteServiceServer interface {
 	GetQuote(context.Context, *QuoteRequest) (*QuoteResponse, error)
 	StoreQuote(context.Context, *StoreQuoteRequest) (*emptypb.Empty, error)
-	mustEmbedUnimplementedQuoteServiceServer()
 }
 
-// UnimplementedQuoteServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedQuoteServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedQuoteServiceServer struct {
 }
 
@@ -72,7 +71,6 @@ func (UnimplementedQuoteServiceServer) GetQuote(context.Context, *QuoteRequest) 
 func (UnimplementedQuoteServiceServer) StoreQuote(context.Context, *StoreQuoteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StoreQuote not implemented")
 }
-func (UnimplementedQuoteServiceServer) mustEmbedUnimplementedQuoteServiceServer() {}
 
 // UnsafeQuoteServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to QuoteServiceServer will

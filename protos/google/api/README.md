@@ -1,0 +1,3 @@
+# Necessary files for creating REST API from .proto
+The [.proto](../../quotes_service.proto) is extended by imports and annotations to use gRPC-Gateway to generate [*.pb.gw.go](../../quotespb/quotes_service.pb.gw.go) file for accessing CRUD as REST API.
+For the imports the `.proto` files in this folder has to be included in this project, as `protoc` won't work otherwise. They can be originally found [here](https://github.com/googleapis/googleapis/tree/master/google/api).
