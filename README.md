@@ -22,3 +22,11 @@ quotes.QuoteService
 
 $ grpcurl -plaintext -d '{}' localhost:3000 quotes.QuoteService/GetQuote
 ```
+
+## Added features
+* devcontainer
+* gRPC server, incl. vscode task to generate compiled files
+* checking out grpcurl
+* adding reflection to be able to list functions with grpcurl
+* adding REST API besides gRPC:
+  * adding annotations in `.proto`, add necessary `google.api.*` files, and extend the protoc command in the vscode task file to generate the `*.pb.gw.go` file 

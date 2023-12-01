@@ -4,10 +4,15 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"net"
+	"net/http"
 
+	"github.com/apfelkraepfla/quotes-service/protos/quotespb"
 	pb "github.com/apfelkraepfla/quotes-service/protos/quotespb"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -16,7 +21,8 @@ type quoteServer struct {
 }
 
 type ServerConfig struct {
-	Port int
+	RpcPort int
+	Port    int
 }
 
 func (s *quoteServer) GetQuote(ctx context.Context, req *pb.QuoteRequest) (*pb.QuoteResponse, error) {
@@ -32,10 +38,10 @@ func (s *quoteServer) StoreQuote(ctx context.Context, req *pb.StoreQuoteRequest)
 	return &pb.Empty{}, nil
 }
 
-func StartServer(config ServerConfig) {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
+func StartServer(config ServerConfig, logger slog.Logger) {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.RpcPort))
 	if err != nil {
-		log.Fatalf("Failed to listen at %v: %v", config.Port, err)
+		logger.Error("Failed to listen to port", slog.Int("port", config.RpcPort), err)
 	}
 
 	grpcServer := grpc.NewServer()
@@ -43,8 +49,27 @@ func StartServer(config ServerConfig) {
 	// Register reflection service on gRPC server.
 	reflection.Register(grpcServer)
 
-	log.Printf("gRPC server is running on port %d", config.Port)
+	logger.Info("gRPC server is running", slog.Int("port", config.RpcPort))
 	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+		logger.Error("Failed to serve", err)
 	}
+}
+
+func StartRPCGatewayServer(config ServerConfig, logger slog.Logger) {
+	gwmux := runtime.NewServeMux()
+	err := quotespb.RegisterQuoteServiceHandlerFromEndpoint(
+		context.Background(),
+		gwmux, ":"+fmt.Sprintf(":%d", config.Port),
+		[]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	gwServer := &http.Server{
+		Addr:    ":" + fmt.Sprintf(":%d", config.Port),
+		Handler: gwmux,
+	}
+
+	logger.Info("Serving gRPC-Gateway on: ", slog.Int("port", config.Port))
+	log.Fatalln(gwServer.ListenAndServe())
 }
