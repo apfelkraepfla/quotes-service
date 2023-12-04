@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/apfelkraepfla/quotes_service/server"
+	"github.com/siarener/quotes_service/server"
 	"github.com/joho/godotenv"
 )
 

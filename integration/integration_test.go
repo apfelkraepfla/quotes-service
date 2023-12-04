@@ -3,65 +3,38 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"net"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
 	"testing"
 
-	pb "github.com/apfelkraepfla/quotes-service/protos/quotespb"
+	pb "github.com/siarener/quotes-service/protos/quotespb"
+	"github.com/siarener/quotes_service/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type testQuoteService struct {
-	pb.QuoteServiceServer
-}
+func TestQuoteService_GetQuote(t *testing.T) {
 
-func (t *testQuoteService) GetQuote(ctx context.Context, req *pb.QuoteRequest) (*pb.QuoteResponse, error) {
-	return &pb.QuoteResponse{
-		Quote: "Test quote for testing",
-	}, nil
-}
-
-// startTestServer starts the gRPC server for testing on a random available port.
-func startTestServer(t *testing.T) (*grpc.Server, net.Listener) {
-	// Get an available port
-	lis, err := net.Listen("tcp", ":0")
-	if err != nil {
-		t.Fatalf("Failed to get an available port: %v", err)
+	opts := &slog.HandlerOptions{
+		Level: slog.LevelDebug,
 	}
 
-	// Create a new gRPC server
-	grpcServer := grpc.NewServer()
+	var handler slog.Handler = slog.NewTextHandler(os.Stdout, opts)
+	logger := slog.New(handler)
+	RpcPort := 3032
+	config := server.ServerConfig{RpcPort: RpcPort, Port: 3033}
 
-	// Register the QuoteServiceServer
-	pb.RegisterQuoteServiceServer(grpcServer, &testQuoteService{})
-
-	// Start the gRPC server
-	go func() {
-		if err := grpcServer.Serve(lis); err != nil {
-			log.Fatalf("Failed to serve: %v", err)
-		}
-	}()
-
-	return grpcServer, lis
-}
-
-// stopTestServer stops the gRPC server for testing.
-func stopTestServer(grpcServer *grpc.Server, lis net.Listener) {
-	grpcServer.Stop()
-	lis.Close()
-}
-
-func TestQuoteService(t *testing.T) {
 	// Start the test gRPC server
-	grpcServer, lis := startTestServer(t)
-	defer stopTestServer(grpcServer, lis)
+	go server.StartServer(config, *logger)
 
-	// Get the address of the test server
-	serverAddr := lis.Addr().String()
+	stopChan := make(chan os.Signal, 1)
 
 	// Create a gRPC client to connect to the test server
-	conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(fmt.Sprintf(":%d", RpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial the server: %v", err)
 	}
@@ -71,16 +44,58 @@ func TestQuoteService(t *testing.T) {
 	client := pb.NewQuoteServiceClient(conn)
 
 	// Perform your gRPC tests using the client...
-	req := &pb.QuoteRequest{}
-	res, err := client.GetQuote(context.Background(), req)
+	getReq := &pb.QuoteRequest{}
+	getRes, err := client.GetQuote(context.Background(), getReq)
 	if err != nil {
 		t.Fatalf("Failed to get quote: %v", err)
 	}
 
 	expectedQuote := "Test quote for testing"
-	if res.Quote != expectedQuote {
-		t.Errorf("Expected quote: %s, got: %s", expectedQuote, res.Quote)
+	if getRes.Quote != expectedQuote {
+		t.Errorf("Expected quote: %s, got: %s", expectedQuote, getRes.Quote)
+	}
+	signal.Notify(stopChan, os.Interrupt, syscall.SIGTERM)
+	<-stopChan
+}
+
+func TestQuoteService_StoreQuote(t *testing.T) {
+	opts := &slog.HandlerOptions{
+		Level: slog.LevelDebug,
 	}
 
+	var handler slog.Handler = slog.NewTextHandler(os.Stdout, opts)
+	logger := slog.New(handler)
+	RpcPort := 3032
+	config := server.ServerConfig{RpcPort: RpcPort, Port: 3033}
+
+	// Start the test gRPC server
+	go server.StartServer(config, *logger)
+
+	stopChan := make(chan os.Signal, 1)
+
+	// Create a gRPC client to connect to the test server
+	conn, err := grpc.Dial(fmt.Sprintf(":%d", RpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("Failed to dial the server: %v", err)
+	}
+	defer conn.Close()
+
+	// Create a QuoteServiceClient
+	client := pb.NewQuoteServiceClient(conn)
+
+	// Perform your gRPC tests using the client...
+	storeReq := &pb.StoreQuoteRequest{Quote: "New test quote"}
+	storeRes, err := client.StoreQuote(context.Background(), storeReq)
+	log.Printf("Here:")
+	if err != nil {
+		t.Fatalf("Failed to store quote: %v", err)
+	}
+	log.Printf("Here: %v", storeRes)
+	//expectedRes := &emptypb.Empty{}
+	//if storeRes != expectedRes {
+	//	t.Errorf("Expected response: %s, got: %s", expectedRes, storeRes)
+	//}
 	// You can add more test cases as needed...
+	signal.Notify(stopChan, os.Interrupt, syscall.SIGTERM)
+	<-stopChan
 }

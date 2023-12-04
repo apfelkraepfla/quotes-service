@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: quotes-service
-        image: ghcr.io/apfelkraepfla/quotes-service:latest
+        image: ghcr.io/siarener/quotes-service:latest
         ports:
         - containerPort: 3000
 

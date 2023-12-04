@@ -6,7 +6,7 @@ import public "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 
-option go_package = "github.com/apfelkraepfla/quotes-service/protos/quotespb";
+option go_package = "github.com/siarener/quotes-service/protos/quotespb";
 
 message QuoteRequest {}
 

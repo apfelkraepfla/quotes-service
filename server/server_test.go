@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	pb "github.com/apfelkraepfla/quotes-service/protos/quotespb"
+	pb "github.com/siarener/quotes-service/protos/quotespb"
 	"github.com/stretchr/testify/assert"
 )
 

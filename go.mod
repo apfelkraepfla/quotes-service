@@ -1,8 +1,8 @@
-module github.com/apfelkraepfla/quotes_service
+module github.com/siarener/quotes_service
 
 go 1.21.4
 
-replace github.com/apfelkraepfla/protos => ../protos
+replace github.com/siarener/protos => ../protos
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

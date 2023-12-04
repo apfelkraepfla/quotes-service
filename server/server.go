@@ -8,8 +8,8 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/apfelkraepfla/quotes-service/protos/quotespb"
-	pb "github.com/apfelkraepfla/quotes-service/protos/quotespb"
+	"github.com/siarener/quotes-service/protos/quotespb"
+	pb "github.com/siarener/quotes-service/protos/quotespb"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

@@ -1,4 +1,4 @@
-module github.com/apfelkraepfla/quotes-service/protos
+module github.com/siarener/quotes-service/protos
 
 go 1.21.4
 
